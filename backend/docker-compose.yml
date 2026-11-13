@@ -1,0 +1,31 @@
+# Optional: a ready-made PostgreSQL for local development, so you don't have to
+# install Postgres yourself.
+#
+#   cd backend
+#   cp .env.example .env        (then edit DB_PASSWORD)
+#   docker compose up -d        (starts Postgres on localhost:5432)
+#
+# The backend then connects with the same DB_* values from backend/.env.
+# Your data lives in the "tirth_pgdata" Docker volume, on your machine only.
+# `docker compose down` keeps it, `docker compose down -v` deletes it.
+services:
+  db:
+    image: postgres:16
+    container_name: tirth-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-MainDatabase}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in backend/.env first}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - tirth_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-MainDatabase}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  tirth_pgdata:

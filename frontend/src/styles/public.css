@@ -1,0 +1,162 @@
+/*
+ * Styles for the public-facing pages (Home/About/Services/Contact/
+ * Login/Signup), moved in from the landing project's index.css.
+ *
+ * Adapted: everything that was originally on html/body/* (global) is
+ * scoped under .public-site instead. The original app WAS the whole
+ * site, so it owned the page background/theme globally; here it shares
+ * the app with the ERP dashboard (styles/style.css), which has its own
+ * theme, so this file must not leak into it. See App.jsx - the public
+ * routes are wrapped in <div className="public-site">.
+ *
+ * :root variables are left global (no name collisions with style.css,
+ * which doesn't use CSS custom properties).
+ */
+
+:root {
+  --bg: #0D0C10;
+  --surface: #161419;
+  --surface-2: #1D1A21;
+  --border: #2A2731;
+  --text: #EDEBF0;
+  --text-dim: #A6A1AF;
+  --amber: #F0B429;
+  --amber-dim: #B98A22;
+  --teal: #2DD4BF;
+  --danger: #F0654F;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.public-site {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(240, 180, 41, 0.06), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(45, 212, 191, 0.05), transparent 40%);
+  background-attachment: fixed;
+}
+
+.public-site a { color: inherit; text-decoration: none; }
+.public-site ul { list-style: none; margin: 0; padding: 0; }
+.public-site button { font-family: inherit; }
+
+.public-site h1, .public-site h2, .public-site h3, .public-site h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.public-site p { line-height: 1.65; color: var(--text-dim); margin: 0; }
+
+.public-site .container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.public-site .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.public-site .eyebrow::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px rgba(240, 180, 41, 0.18);
+}
+
+.public-site .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.public-site .btn:active { transform: translateY(1px); }
+
+.public-site .btn-primary {
+  background: var(--amber);
+  color: #191307;
+}
+.public-site .btn-primary:hover { background: #F7C24B; }
+
+.public-site .btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.public-site .btn-ghost:hover { border-color: var(--amber-dim); color: var(--amber); }
+
+.public-site .btn-block { width: 100%; }
+
+.public-site .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+
+/* ---- circuit-trace divider: the site's signature element ---- */
+.public-site .circuit-divider {
+  position: relative;
+  height: 46px;
+  margin: 0 auto;
+  max-width: 1160px;
+}
+.public-site .circuit-divider svg { width: 100%; height: 100%; display: block; }
+.public-site .circuit-divider .trace {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+.public-site .circuit-divider .node {
+  fill: var(--bg);
+  stroke: var(--amber-dim);
+  stroke-width: 1.5;
+}
+.public-site .circuit-divider .pulse {
+  fill: var(--amber);
+  filter: drop-shadow(0 0 4px rgba(240, 180, 41, 0.7));
+  animation: travel 6s linear infinite;
+  offset-rotate: 0deg;
+}
+@keyframes travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-site .circuit-divider .pulse { animation: none; opacity: 0.9; }
+}
+
+.public-site ::selection { background: rgba(240, 180, 41, 0.3); }
+
+@media (max-width: 720px) {
+  .public-site .container { padding: 0 20px; }
+  .public-site .two-col { grid-template-columns: 1fr !important; }
+  .public-site .nav-links { display: none !important; }
+}

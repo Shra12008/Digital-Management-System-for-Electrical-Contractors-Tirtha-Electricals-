@@ -1,0 +1,42 @@
+-- ============================================================================
+-- ⚠️  SUPERSEDED - DO NOT RUN THIS FILE ANYMORE.
+-- The email policy changed from case-insensitive to case-SENSITIVE after
+-- this was written. If you already ran this, run
+-- backend/sql/drop-case-insensitive-email-index.sql to reverse it.
+-- Kept here only for historical record of what was previously done.
+-- ============================================================================
+--
+-- Makes the "email is case-insensitively unique" policy an actual database
+-- invariant, not just an application-level convention.
+--
+-- Context: app_user.email already has a plain UNIQUE constraint (from
+-- @Column(unique = true) on User.java), but that constraint compares raw
+-- bytes - it's case-SENSITIVE by default in Postgres. Today it only
+-- prevents case-varied duplicates because every write path in the Java
+-- code (AuthServiceImpl.signup, AdminSeeder) already normalizes to
+-- lowercase before saving. That's correct, but it's an implicit guarantee
+-- that depends on every current AND future write path remembering to
+-- normalize - a single missed .toLowerCase() call, or a direct SQL
+-- INSERT/UPDATE from outside the application, could silently create a
+-- case-varied duplicate account. This migration closes that gap for real,
+-- at the database level, regardless of what the application code does.
+--
+-- Safe to run on a database with existing rows: as established in the
+-- previous role-constraint migrations, every row's email is ALREADY
+-- lowercase (the app has normalized on write since before this table had
+-- any real user data), so this index creation cannot fail on an existing
+-- case-varied duplicate - there shouldn't be one. The verification query
+-- at the bottom confirms that before you run this, if you want to check
+-- first.
+--
+--   psql -h localhost -p 5432 -U postgres -d MainDatabase -f backend/sql/enforce-case-insensitive-email.sql
+
+-- Optional pre-check: run this FIRST if you want to confirm there are no
+-- existing case-varied duplicates before adding the index below (there
+-- shouldn't be any, per the reasoning above, but this is free to check).
+--   SELECT LOWER(email) FROM app_user GROUP BY LOWER(email) HAVING COUNT(*) > 1;
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_app_user_email_lower ON app_user (LOWER(email));
+
+-- Verify afterwards:
+--   SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'app_user';

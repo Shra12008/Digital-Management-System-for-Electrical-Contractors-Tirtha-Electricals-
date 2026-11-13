@@ -1,0 +1,33 @@
+# ---- Secrets: never commit these (the *.example files are the safe templates) ----
+.env
+.env.*
+!.env.example
+# frontend/.env holds only the public API path (VITE_API_BASE_URL=/api), no secrets - commit it
+!frontend/.env
+*.pem
+*.key
+
+# ---- Backend (Maven / Java) ----
+backend/target/
+backend/HELP.md
+backend/.mvn/wrapper/maven-wrapper.jar
+*.log
+hs_err_pid*
+
+# ---- Frontend (Node / Vite) ----
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+
+# ---- IDEs and OS files ----
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ---- Database dumps / local data (each developer has their own database) ----
+*.dump
+*.backup
+pgdata/

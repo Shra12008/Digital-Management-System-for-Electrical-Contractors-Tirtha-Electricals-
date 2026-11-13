@@ -1,0 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* React Router's <NavLink>/<Link> render real <a> tags, which browsers
+   underline by default. The original vanilla-JS app never had real links
+   in these spots (it used divs/buttons with onclick), so style.css never
+   needed to reset this. Resetting it globally here keeps style.css
+   untouched while matching the original look. */
+a {
+  text-decoration: none;
+  color: inherit;
+}
